@@ -135,6 +135,13 @@ span.tp{height:30px;padding:0 12px;font-size:12.5px}
 .sheet{position:relative;width:min(560px,100%);max-height:100%;display:flex;flex-direction:column;background:var(--card);border-radius:26px;box-shadow:var(--sh-bar);animation:slide .32s var(--ease);overflow:hidden}
 @keyframes fade{from{opacity:0}}
 @keyframes slide{from{transform:translateY(40px);opacity:0}}
+/* szybkie dodanie: na komputerze na środku, na telefonie u góry, żeby nie zasłaniała go klawiatura */
+.scrim.top{align-items:center;padding:12px}
+@media (max-width:720px){
+  .scrim.top{align-items:flex-start;padding:calc(12px + env(safe-area-inset-top,0px)) 12px 12px}
+  .scrim.top .sheet{animation-name:slide-down}
+}
+@keyframes slide-down{from{transform:translateY(-40px);opacity:0}}
 .sh-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:22px 20px 6px}
 .sh-top h2{font-size:22px;font-weight:800;letter-spacing:-.02em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sh-acts{display:flex;gap:6px;flex:none}
@@ -753,6 +760,7 @@ function openQuick() {
     <input class="inp name-inp" id="q-name" maxlength="50" placeholder="Co zjadłeś?" aria-label="Nazwa" autocomplete="off">
     <div class="g3">${[['p', 'Białko', 'k-p'], ['f', 'Tłuszcz', 'k-f'], ['c', 'Węgle', 'k-c']].map(([k, l, cl]) => `<label class="${cl}"><small>${l}</small><input class="inp" id="q-${k}" inputmode="decimal" placeholder="g" aria-label="${l} (g)" autocomplete="off"></label>`).join('')}</div>
   </form>`, `<div class="tot"><b id="q-kcal">0 kcal</b></div><button class="btn fit" type="submit" form="qf">Dodaj</button>`);
+  sheetEl.firstElementChild.classList.add('top');
   const vals = () => ({ p: num($('q-p').value), c: num($('q-c').value), f: num($('q-f').value) });
   $('qf').addEventListener('input', () => { $('q-kcal').textContent = `${n0(kcalOf(vals()))} kcal`; });
   $('qf').addEventListener('submit', ev => {

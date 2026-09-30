@@ -1,6 +1,6 @@
 /* Makrotrack — service worker: aplikacja otwiera się bez internetu. Dane posiłków nie są tu przechowywane
    (są w localStorage i w Supabase; zapytania do Supabase idą zawsze do sieci). */
-const VERSION = 'v1';
+const VERSION = 'v3';
 const CACHE = `makrotrack-${VERSION}`;
 const SHELL = [
   './',

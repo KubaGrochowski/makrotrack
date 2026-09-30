@@ -778,6 +778,7 @@ function openQuick() {
   $('q-name').focus();
 }
 
+const APP_VERSION = 3; // widać w Ustawieniach; podbij przy zmianach, żeby sprawdzić, czy telefon ma nową wersję
 // Ustawienia → zapotrzebowanie: kalorie i makro (puste kalorie liczą się z makro).
 function openGoals() {
   const g = S.goals || {};
@@ -786,7 +787,7 @@ function openGoals() {
     <label class="gk"><input class="inp" id="g-kcal" inputmode="numeric" value="${g.kcal || ''}" placeholder="2000" aria-label="Kalorie" autocomplete="off"><span>kcal</span></label>
     <div class="g3">${[['p', 'Białko', 'k-p'], ['f', 'Tłuszcz', 'k-f'], ['c', 'Węgle', 'k-c']].map(([k, l, cl]) => `<label class="${cl}"><small>${l}</small><input class="inp" id="g-${k}" inputmode="decimal" value="${g[k] ? nf(g[k]) : ''}" placeholder="g" aria-label="${l} (g)" autocomplete="off"></label>`).join('')}</div>
   </form>
-    <div class="acct"><span class="cap">Konto</span><div><span>${esc(session?.email || '')}</span><button class="btn ghost fit" id="logout" type="button">Wyloguj</button></div></div>`, `<button class="btn" type="submit" form="gf">Zapisz</button>`);
+    <div class="acct"><span class="cap">Konto</span><div><span>${esc(session?.email || '')}</span><button class="btn ghost fit" id="logout" type="button">Wyloguj</button></div><small style="color:var(--ink-3);font-weight:600">Wersja ${APP_VERSION}</small></div>`, `<button class="btn" type="submit" form="gf">Zapisz</button>`);
   $('logout').addEventListener('click', () => { closeSheet(); logout(); });
   const vals = () => ({ kcal: Math.round(num($('g-kcal').value)), p: num($('g-p').value), c: num($('g-c').value), f: num($('g-f').value) });
   $('gf').addEventListener('submit', ev => {

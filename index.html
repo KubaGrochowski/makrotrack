@@ -20,18 +20,18 @@
 /* Układ: jeden ekran dnia (tydzień u góry, lista posiłków), stały pasek licznika z przyciskiem + na dole, wszystko inne w panelach od dołu. */
 :root{
   --bg:#F3F3F5;--card:#FFFFFF;--soft:#F3F3F5;--ink:#111114;--ink-2:#6B6B76;--ink-3:#A3A3AD;--line:#E8E8ED;--on-ink:#FFFFFF;
-  --kcal:#F2877E;--pro:#FFFFFF;--carb:#86CF98;--fat:#F5D06A;--over:#E5484D;--pro-edge:rgba(17,17,20,.28);
+  --kcal:#F2877E;--pro:#FFFFFF;--carb:#86CF98;--fat:#F5D06A;--over:#E5484D;--pro-edge:rgba(17,17,20,.28);--pro-seg:rgba(17,17,20,.6);
   --ph-s:62%;--ph-b:92%;--ph-f:38%;
   --scrim:rgba(17,17,20,.38);--sh:0 1px 2px rgba(17,17,20,.04),0 8px 24px rgba(17,17,20,.06);--sh-bar:0 10px 40px rgba(17,17,20,.14);
   --font:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;--ease:cubic-bezier(.2,.8,.2,1);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0B0B0D;--card:#17171A;--soft:#222226;--ink:#F4F4F5;--ink-2:#A1A1AA;--ink-3:#64646C;--line:#26262B;--on-ink:#0B0B0D;
-  --kcal:#FF9B93;--pro:#F4F4F6;--carb:#9BDDAB;--fat:#FFDD85;--over:#FF6369;--pro-edge:transparent;--ph-s:30%;--ph-b:20%;--ph-f:74%;
+  --kcal:#FF9B93;--pro:#F4F4F6;--carb:#9BDDAB;--fat:#FFDD85;--over:#FF6369;--pro-edge:transparent;--pro-seg:transparent;--ph-s:30%;--ph-b:20%;--ph-f:74%;
   --scrim:rgba(0,0,0,.6);--sh:0 1px 2px rgba(0,0,0,.3);--sh-bar:0 10px 40px rgba(0,0,0,.6);color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0B0B0D;--card:#17171A;--soft:#222226;--ink:#F4F4F5;--ink-2:#A1A1AA;--ink-3:#64646C;--line:#26262B;--on-ink:#0B0B0D;
-  --kcal:#FF9B93;--pro:#F4F4F6;--carb:#9BDDAB;--fat:#FFDD85;--over:#FF6369;--pro-edge:transparent;--ph-s:30%;--ph-b:20%;--ph-f:74%;
+  --kcal:#FF9B93;--pro:#F4F4F6;--carb:#9BDDAB;--fat:#FFDD85;--over:#FF6369;--pro-edge:transparent;--pro-seg:transparent;--ph-s:30%;--ph-b:20%;--ph-f:74%;
   --scrim:rgba(0,0,0,.6);--sh:0 1px 2px rgba(0,0,0,.3);--sh-bar:0 10px 40px rgba(0,0,0,.6);color-scheme:dark}
 
 *{box-sizing:border-box}
@@ -128,6 +128,7 @@ span.tp{height:30px;padding:0 12px;font-size:12.5px}
 .seg{display:flex;gap:2px;height:6px}
 .seg i{flex:1 1 0;min-width:0;border-radius:2px;background:var(--soft)}
 .seg i.on{background:var(--mc,var(--ink));box-shadow:inset 0 0 0 1px var(--edge,transparent)}
+.k-p .seg i.on{box-shadow:inset 0 0 0 1.5px var(--pro-seg,transparent)}
 .st.over .seg i.on{background:var(--over);box-shadow:none}
 .fab{width:56px;height:56px;border-radius:50%;background:var(--ink);color:var(--on-ink);display:grid;place-items:center;transition:transform .15s}
 .fab:active{transform:scale(.92)}
@@ -780,7 +781,7 @@ function openQuick() {
   $('q-name').focus();
 }
 
-const APP_VERSION = 5; // widać w Ustawieniach; podbij przy zmianach, żeby sprawdzić, czy telefon ma nową wersję
+const APP_VERSION = 6; // widać w Ustawieniach; podbij przy zmianach, żeby sprawdzić, czy telefon ma nową wersję
 // Ustawienia → zapotrzebowanie: kalorie i makro (puste kalorie liczą się z makro).
 function openGoals() {
   const g = S.goals || {};

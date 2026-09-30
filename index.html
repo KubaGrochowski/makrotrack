@@ -115,7 +115,8 @@ span.tp{height:30px;padding:0 12px;font-size:12.5px}
 
 /* pasek na dole: licznik dnia + dodawanie */
 .bar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));width:min(560px,calc(100% - 24px));z-index:50;display:grid;grid-template-columns:minmax(0,1fr) 56px;gap:10px;align-items:center;padding:10px 10px 10px 18px;background:var(--card);border-radius:26px;box-shadow:var(--sh-bar);border:1px solid var(--line)}
-.stats{display:grid;grid-template-columns:1.25fr repeat(3,minmax(0,1fr));gap:14px;text-align:left;min-width:0}
+.stats{display:grid;grid-template-columns:1.25fr repeat(3,minmax(0,1fr));gap:14px;text-align:left;min-width:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.stats:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:12px}
 .st{display:flex;flex-direction:column;gap:4px;min-width:0}
 .st small{font-size:11px;font-weight:700;color:var(--ink-3);display:flex;align-items:center;gap:5px;white-space:nowrap}
 .st small::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--mc,var(--ink));box-shadow:inset 0 0 0 1px var(--edge,transparent)}
@@ -124,8 +125,9 @@ span.tp{height:30px;padding:0 12px;font-size:12.5px}
 .st.kcal b{font-size:19px}
 .st.over b{color:var(--over)}
 .tr{height:6px;border-radius:3px;background:var(--soft);overflow:hidden}
-.tr i{display:block;height:100%;border-radius:3px;background:var(--mc,var(--ink));box-shadow:inset 0 0 0 1px var(--edge,transparent);transition:width .6s var(--ease)}
-.st.over .tr i{background:var(--over)}
+/* szerokość wypełnienia wpisana od razu (bez animacji, która na telefonie potrafiła zostać na 0) */
+.tr span{display:block;height:100%;border-radius:3px;background:var(--mc,var(--ink));box-shadow:inset 0 0 0 1px var(--edge,transparent)}
+.st.over .tr span{background:var(--over)}
 .fab{width:56px;height:56px;border-radius:50%;background:var(--ink);color:var(--on-ink);display:grid;place-items:center;transition:transform .15s}
 .fab:active{transform:scale(.92)}
 
@@ -307,7 +309,7 @@ html,body{overflow-x:clip;overscroll-behavior-x:none;touch-action:manipulation}
 </div>
 
 <div class="bar" hidden>
-  <button class="stats" id="stats" aria-label="Zjedzone — zapotrzebowanie"></button>
+  <div class="stats" id="stats" role="button" tabindex="0" aria-label="Zjedzone — zapotrzebowanie"></div>
   <button class="fab" id="fab" aria-label="Szybkie dodanie"><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M11 3v16M3 11h16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
 </div>
 <div id="sheet"></div>
@@ -595,13 +597,13 @@ function render() {
 }
 
 // Pasek: kcal i makro dnia względem zapotrzebowania.
-const prevW = {};
 function renderBar() {
   const e = eaten(), g = S.goals || {};
-  const st = (id, cls, lbl, v, max, unit) => `<div class="st ${cls}${max && v > max * 1.03 ? ' over' : ''}"><small>${lbl}</small><b>${n0(v)}${max ? `<em>/${n0(max)}</em>` : unit ? `<em>${unit}</em>` : ''}</b><div class="tr"><i data-w="${id}" style="width:${prevW[id] ?? 0}%" data-to="${max ? Math.min(100, v / max * 100) : 0}"></i></div></div>`;
-  $('stats').innerHTML = st('k', 'kcal k-k', 'kcal', e.kcal, g.kcal, '') + st('p', 'k-p', 'Białko', e.p, g.p, 'g') + st('f', 'k-f', 'Tłuszcz', e.f, g.f, 'g') + st('c', 'k-c', 'Węgle', e.c, g.c, 'g');
-  void $('stats').offsetWidth;
-  $('stats').querySelectorAll('[data-to]').forEach(i => { i.style.width = i.dataset.to + '%'; prevW[i.dataset.w] = +i.dataset.to; });
+  const st = (id, cls, lbl, v, max, unit) => {
+    const w = max ? Math.min(100, v / max * 100) : 0;
+    return `<div class="st ${cls}${max && v > max * 1.03 ? ' over' : ''}"><small>${lbl}</small><b>${n0(v)}${max ? `<em>/${n0(max)}</em>` : unit ? `<em>${unit}</em>` : ''}</b><div class="tr"><span style="width:${w.toFixed(1)}%"></span></div></div>`;
+  };
+  $('stats').innerHTML = st('k', 'kcal k-k', S.goals ? 'kcal' : 'Ustaw cel', e.kcal, g.kcal, '') + st('p', 'k-p', 'Białko', e.p, g.p, 'g') + st('f', 'k-f', 'Tłuszcz', e.f, g.f, 'g') + st('c', 'k-c', 'Węgle', e.c, g.c, 'g');
 }
 
 let tt;
@@ -812,6 +814,7 @@ $('sorts').addEventListener('click', e => {
   render();
 });
 $('stats').addEventListener('click', openGoals);
+$('stats').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openGoals(); } });
 document.addEventListener('click', e => { if (e.target.closest('[data-goals]')) openGoals(); });
 $('sw').addEventListener('click', () => {
   S.tab = S.tab === 'day' ? 'meals' : 'day'; S.anim = true; render(); window.scrollTo({ top: 0 });

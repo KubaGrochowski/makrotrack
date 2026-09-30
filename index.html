@@ -124,10 +124,6 @@ span.tp{height:30px;padding:0 12px;font-size:12.5px}
 .st b em{font-style:normal;font-weight:600;color:var(--ink-3);font-size:12px}
 .st.kcal b{font-size:19px}
 .st.over b{color:var(--over)}
-.tr{height:6px;border-radius:3px;background:var(--soft);overflow:hidden}
-/* szerokość wypełnienia wpisana od razu (bez animacji, która na telefonie potrafiła zostać na 0) */
-.tr span{display:block;height:100%;border-radius:3px;background:var(--mc,var(--ink));box-shadow:inset 0 0 0 1px var(--edge,transparent)}
-.st.over .tr span{background:var(--over)}
 .fab{width:56px;height:56px;border-radius:50%;background:var(--ink);color:var(--on-ink);display:grid;place-items:center;transition:transform .15s}
 .fab:active{transform:scale(.92)}
 
@@ -599,10 +595,7 @@ function render() {
 // Pasek: kcal i makro dnia względem zapotrzebowania.
 function renderBar() {
   const e = eaten(), g = S.goals || {};
-  const st = (id, cls, lbl, v, max, unit) => {
-    const w = max ? Math.min(100, v / max * 100) : 0;
-    return `<div class="st ${cls}${max && v > max * 1.03 ? ' over' : ''}"><small>${lbl}</small><b>${n0(v)}${max ? `<em>/${n0(max)}</em>` : unit ? `<em>${unit}</em>` : ''}</b><div class="tr"><span style="width:${w.toFixed(1)}%"></span></div></div>`;
-  };
+  const st = (id, cls, lbl, v, max, unit) => `<div class="st ${cls}${max && v > max * 1.03 ? ' over' : ''}"><small>${lbl}</small><b>${n0(v)}${max ? `<em>/${n0(max)}</em>` : unit ? `<em>${unit}</em>` : ''}</b></div>`;
   $('stats').innerHTML = st('k', 'kcal k-k', S.goals ? 'kcal' : 'Ustaw cel', e.kcal, g.kcal, '') + st('p', 'k-p', 'Białko', e.p, g.p, 'g') + st('f', 'k-f', 'Tłuszcz', e.f, g.f, 'g') + st('c', 'k-c', 'Węgle', e.c, g.c, 'g');
 }
 
@@ -778,7 +771,7 @@ function openQuick() {
   $('q-name').focus();
 }
 
-const APP_VERSION = 3; // widać w Ustawieniach; podbij przy zmianach, żeby sprawdzić, czy telefon ma nową wersję
+const APP_VERSION = 4; // widać w Ustawieniach; podbij przy zmianach, żeby sprawdzić, czy telefon ma nową wersję
 // Ustawienia → zapotrzebowanie: kalorie i makro (puste kalorie liczą się z makro).
 function openGoals() {
   const g = S.goals || {};

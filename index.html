@@ -124,6 +124,11 @@ span.tp{height:30px;padding:0 12px;font-size:12.5px}
 .st b em{font-style:normal;font-weight:600;color:var(--ink-3);font-size:12px}
 .st.kcal b{font-size:19px}
 .st.over b{color:var(--over)}
+/* pasek z 10 kresek (każda = 10% celu): zapalone kreski to zwykłe tła, bez liczenia szerokości i bez animacji */
+.seg{display:flex;gap:2px;height:6px}
+.seg i{flex:1 1 0;min-width:0;border-radius:2px;background:var(--soft)}
+.seg i.on{background:var(--mc,var(--ink));box-shadow:inset 0 0 0 1px var(--edge,transparent)}
+.st.over .seg i.on{background:var(--over);box-shadow:none}
 .fab{width:56px;height:56px;border-radius:50%;background:var(--ink);color:var(--on-ink);display:grid;place-items:center;transition:transform .15s}
 .fab:active{transform:scale(.92)}
 
@@ -595,7 +600,11 @@ function render() {
 // Pasek: kcal i makro dnia względem zapotrzebowania.
 function renderBar() {
   const e = eaten(), g = S.goals || {};
-  const st = (id, cls, lbl, v, max, unit) => `<div class="st ${cls}${max && v > max * 1.03 ? ' over' : ''}"><small>${lbl}</small><b>${n0(v)}${max ? `<em>/${n0(max)}</em>` : unit ? `<em>${unit}</em>` : ''}</b></div>`;
+  const st = (id, cls, lbl, v, max, unit) => {
+    const on = max && v > 0 ? Math.min(10, Math.max(1, Math.round(v / max * 10))) : 0;
+    let seg = ''; for (let i = 0; i < 10; i++) seg += i < on ? '<i class="on"></i>' : '<i></i>';
+    return `<div class="st ${cls}${max && v > max * 1.03 ? ' over' : ''}"><small>${lbl}</small><b>${n0(v)}${max ? `<em>/${n0(max)}</em>` : unit ? `<em>${unit}</em>` : ''}</b><div class="seg" aria-hidden="true">${seg}</div></div>`;
+  };
   $('stats').innerHTML = st('k', 'kcal k-k', S.goals ? 'kcal' : 'Ustaw cel', e.kcal, g.kcal, '') + st('p', 'k-p', 'Białko', e.p, g.p, 'g') + st('f', 'k-f', 'Tłuszcz', e.f, g.f, 'g') + st('c', 'k-c', 'Węgle', e.c, g.c, 'g');
 }
 
@@ -771,7 +780,7 @@ function openQuick() {
   $('q-name').focus();
 }
 
-const APP_VERSION = 4; // widać w Ustawieniach; podbij przy zmianach, żeby sprawdzić, czy telefon ma nową wersję
+const APP_VERSION = 5; // widać w Ustawieniach; podbij przy zmianach, żeby sprawdzić, czy telefon ma nową wersję
 // Ustawienia → zapotrzebowanie: kalorie i makro (puste kalorie liczą się z makro).
 function openGoals() {
   const g = S.goals || {};

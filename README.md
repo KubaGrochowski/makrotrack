@@ -11,6 +11,12 @@ Na żywo: https://kubagrochowski.github.io/makrotrack/
 - **Pasek na dole**: kcal, białko, tłuszcz i węglowodany dnia względem zapotrzebowania; **+** to szybkie dodanie bez zapisywania posiłku.
 - **Ustawienia** (zębatka): zapotrzebowanie i wylogowanie.
 
+## Telefon i offline
+
+- Instalacja: iPhone → Udostępnij → „Do ekranu początkowego”; Android → „Zainstaluj aplikację”.
+- Service worker (`sw.js`) trzyma pliki aplikacji, więc otwiera się bez internetu; zmiany czekają w kolejce i wysyłają się po odzyskaniu sieci. Po dodaniu nowych plików dopisz je do `SHELL` i podbij `VERSION` w `sw.js`.
+- Nie da się przybliżać ani przesuwać ekranu w bok (jak w hbtrack).
+
 ## Konto i dane (Supabase)
 
 Logowanie e-mailem i hasłem w tym samym projekcie Supabase co [hbtrack](https://github.com/KubaGrochowski/hbtrack), więc działa to samo konto. Dane są w osobnej tabeli `public.makro_items`: jeden wiersz na posiłek (`m:<id>`), dzień (`d:<rrrr-mm-dd>`) i zapotrzebowanie (`goals`). Zmiany zapisują się od razu na urządzeniu i wysyłają w tle; bez internetu czekają w kolejce. Inne urządzenia pobierają zmiany po powrocie do aplikacji i co 30 s.

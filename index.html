@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#F3F3F5" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0B0B0D" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -255,6 +255,9 @@ span.tp{height:30px;padding:0 12px;font-size:12.5px}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 [hidden]{display:none!important}
 body{margin:0}
+/* bez przybliżania (jak w hbtrack): bez podwójnego stuknięcia, bez przesuwania w bok, pola ≥ 16 px (iPhone nie przybliża przy pisaniu) */
+html,body{overflow-x:clip;overscroll-behavior-x:none;touch-action:manipulation}
+@media (max-width:680px){.inp,.ing-t .inp,.nf .inp,.search .inp{font-size:16px}.name-inp{font-size:19px}}
 .auth{min-height:calc(100svh - 150px);display:grid;place-items:center}
 .auth-card{width:min(360px,100%);display:flex;flex-direction:column;gap:12px}
 .auth-brand{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:14px}
@@ -824,6 +827,12 @@ const dayTick = () => { const t = key(new Date()); if (t !== today) { if (key(S.
 document.addEventListener('visibilitychange', () => { if (!document.hidden) dayTick(); });
 setInterval(dayTick, 60000);
 
+// ---- dopisywane przy budowaniu strony ----
+/* telefon: bez przybliżania (Safari ignoruje user-scalable=no, więc blokujemy gest szczypania) */
+['gesturestart', 'gesturechange', 'gestureend'].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive: false }));
+document.addEventListener('touchmove', e => { if (e.touches.length > 1 || (e.scale && e.scale !== 1)) e.preventDefault(); }, { passive: false });
+/* offline: service worker trzyma pliki aplikacji */
+if ('serviceWorker' in navigator && location.protocol !== 'file:') window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => { }));
 boot();
 })();
 </script>
